@@ -79,6 +79,7 @@ export default function Navbar() {
   ];
 
   return (
+    <>
     <header
       className={cn(
         'fixed top-0 w-full z-40 transition-all duration-500',
@@ -243,65 +244,65 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <>
-            {/* Overlay — solo fondo oscuro, SIN clase mobile-menu-panel */}
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-            {/* Panel — fondo sólido forzado con style inline */}
-            <motion.div
-              initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 h-screen w-[80%] max-w-sm z-[60] flex flex-col p-6 md:hidden shadow-2xl border-r"
-              style={{ backgroundColor: '#0a0a0a', borderColor: '#3f3f46' }}
-            >
-              <button onClick={() => setIsMobileMenuOpen(false)}
-                className="self-end mb-6 text-foreground/60 hover:text-foreground">
-                <X size={24} />
-              </button>
-
-              {/* Búsqueda mobile */}
-              <form onSubmit={handleSearchSubmit} className="mb-6">
-                <div className="flex items-center border border-border bg-card px-3">
-                  <Search size={15} className="text-muted-foreground" />
-                  <input
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Buscar joyas..."
-                    className="w-full bg-transparent px-3 py-2.5 text-sm focus:outline-none"
-                  />
-                </div>
-                {searchResults.length > 0 && (
-                  <div className="border border-border border-t-0 bg-card">
-                    {searchResults.map(product => (
-                      <button key={product.id} onClick={() => { handleSelectProduct(product.id); setIsMobileMenuOpen(false); }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-background/60 text-left border-b border-border/50 last:border-0">
-                        <p className="text-sm line-clamp-1 flex-1">{product.name}</p>
-                        <span className="text-primary text-xs">{formatPrice(product.price)}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </form>
-
-              <div className="flex flex-col gap-6">
-                {navLinks.map((link) => (
-                  <Link key={link.name} href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-lg font-display tracking-widest uppercase hover:text-primary transition-colors">
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </header>
+
+    {/* Mobile Menu — fuera del header para evitar herencia de backdrop-blur */}
+    <AnimatePresence>
+      {isMobileMenuOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <motion.div
+            initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 left-0 h-screen w-[80%] max-w-sm z-[60] flex flex-col p-6 md:hidden shadow-2xl border-r"
+            style={{ backgroundColor: '#0a0a0a', borderColor: '#3f3f46', isolation: 'isolate' }}
+          >
+            <button onClick={() => setIsMobileMenuOpen(false)}
+              className="self-end mb-6 text-foreground/60 hover:text-foreground">
+              <X size={24} />
+            </button>
+
+            {/* Búsqueda mobile */}
+            <form onSubmit={handleSearchSubmit} className="mb-6">
+              <div className="flex items-center border border-border bg-card px-3">
+                <Search size={15} className="text-muted-foreground" />
+                <input
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Buscar joyas..."
+                  className="w-full bg-transparent px-3 py-2.5 text-sm focus:outline-none"
+                />
+              </div>
+              {searchResults.length > 0 && (
+                <div className="border border-border border-t-0 bg-card">
+                  {searchResults.map(product => (
+                    <button key={product.id} onClick={() => { handleSelectProduct(product.id); setIsMobileMenuOpen(false); }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-background/60 text-left border-b border-border/50 last:border-0">
+                      <p className="text-sm line-clamp-1 flex-1">{product.name}</p>
+                      <span className="text-primary text-xs">{formatPrice(product.price)}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </form>
+
+            <div className="flex flex-col gap-6">
+              {navLinks.map((link) => (
+                <Link key={link.name} href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-lg font-display tracking-widest uppercase hover:text-primary transition-colors">
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
